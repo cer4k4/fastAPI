@@ -53,6 +53,32 @@ class Users:
             "status":200
         }
 
+    def get_all_db(self):
+        result = list(self.users_collection.find())
+        if not result:
+            return {
+                "data":{},
+                "status": 404,
+                "message": "کاربری وجود ندارد"
+            }
+        data = []
+        for r in result:
+            userdata = {
+                "name" : r.get("name"),
+                "family" : r.get("family"),
+                "age" : r.get("age"),
+                "sex" : r.get("gender"),
+                "email": r.get("email")
+            }
+            data.append(userdata)
+        return {
+            "data":data,
+            "message":"درخواست با موفقیت انجام شد",
+            "status":200
+        }
+
+
+        
     def update_user_db(self, UserModel: models.user.Human,userId: str):
         if self.users_collection.find_one({"email": UserModel.email}) != None:
             return {

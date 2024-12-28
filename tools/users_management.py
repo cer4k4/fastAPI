@@ -1,9 +1,10 @@
-from cryptography.fernet import Fernet
-from config.loader import Configer
-from datetime import *
 import re
 import jwt
 import random
+from cryptography.fernet import Fernet
+from config.loader import Configer
+from datetime import *
+
 
 myConf = Configer()
 

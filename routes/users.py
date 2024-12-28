@@ -13,6 +13,13 @@ async def create_user(user: user.Human):
     result = user_obj.create_user_db(UserModel=user,creator="Ali karimi")
     return JSONResponse(status_code=result.get("status"),content=result.get("data"))
 
+# Get All User
+@router.get("/users")
+async def get_all():
+    user_obj_db = Users()
+    userList = user_obj_db.get_all_db()
+    return JSONResponse(status_code=userList.get("status"),content=userList.get("data"))
+
 # Get Single User
 @router.get("/user/{user_id}")
 async def get_by_user_id(user_id: str):

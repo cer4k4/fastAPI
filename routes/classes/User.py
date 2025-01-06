@@ -1,5 +1,6 @@
 from bson.objectid import ObjectId
 from db.mongodb_management import MongoDBConnection
+from tools.users_management import UsersManagement
 import models.user
 
 
@@ -8,7 +9,7 @@ class Users:
     def __init__(self):
         self.mongodb_management_obj = self.mongodb_management_obj = MongoDBConnection()
         self.users_collection = self.mongodb_management_obj.db["users"]
-
+        self.users_management_obj = UsersManagement
     def create_user_db(self, UserModel: models.user.Human,creator):
         if self.users_collection.find_one({"email": UserModel.email}) != None:
             return {
@@ -23,12 +24,15 @@ class Users:
             "age": UserModel.age,
             "email": UserModel.email,
             "gender": UserModel.gender,
+            "password":UserModel.password,
             "creator": creator
         }
+        dicModel["password"] = self.users_management_obj.encrypt_password(self.users_management_obj,UserModel.password)
+        
         result = self.users_collection.insert_one(dicModel)
         return {
             "data" : {
-                "user_id": str(result.inserted_id),
+                "access_token":self.users_management_obj.generate_jwt(self.users_management_obj,result.inserted_id),
                 "message": "با موفقیت ثبت شد"
             },
             "status": 200

@@ -6,4 +6,5 @@ class Human(BaseModel):
     family: str
     age: int
     email: str
+    password: str
     gender: Union[bool,None] = False

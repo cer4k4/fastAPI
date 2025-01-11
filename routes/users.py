@@ -1,16 +1,18 @@
 from starlette.responses import JSONResponse
-from fastapi import APIRouter
+from fastapi import APIRouter,Depends
 from routes.classes.User import Users
 from models import user
+from middleware import *
 
 
 router = APIRouter(tags=["user"])
 
 # Create User
 @router.post("/user")
-async def create_user(user: user.Human):
+async def create_user(user: user.Human,user_info=Depends(get_current_active_user)):
+    #print(creator)
     user_obj = Users()
-    result = user_obj.create_user_db(UserModel=user,creator="Ali karimi")
+    result = user_obj.create_user_db(UserModel=user,creator=user_info)
     return JSONResponse(status_code=result.get("status"),content=result.get("data"))
 
 # Get All User

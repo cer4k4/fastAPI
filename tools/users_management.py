@@ -4,7 +4,10 @@ import random
 from cryptography.fernet import Fernet
 from config.loader import Configer
 from datetime import *
+from pathlib import Path
 
+
+myfile = Path('./config/config.ini')
 
 myConf = Configer()
 
@@ -34,8 +37,8 @@ class UsersManagement:
             key = myConf.get("user", "secret_key") != None
         except:
             key = str(key.decode('utf-8'))
-            config.set("user", "secret_key", key)
-            config.write(myfile.open("w"))
+            Configer.set("user", "secret_key", key)
+            Configer.write(myfile.open("w"))
         return key
 
     def validate_email(self, email):
@@ -60,7 +63,7 @@ class UsersManagement:
                 timezone.utc) + timedelta(minutes=int(myConf.get("user", "token_lifetime"))))*1000)
             payload = {
                 "type": "normal_token",
-                "user_id": user_id,
+                "user_id": str(user_id),
                 "expire_at": expiration_time
             }
             token = jwt.encode(payload, secret_key, algorithm="HS256")
@@ -69,12 +72,14 @@ class UsersManagement:
                 timezone.utc) + timedelta(minutes=int(myConf.get("user", "refresh_token_lifetime"))))*1000)
             payload = {
                 "type": "refresh_token",
-                "user_id": user_id,
+                "user_id": str(user_id),
                 "expire_at": expiration_time
             }
             refresh_token = jwt.encode(payload, secret_key, algorithm="HS256")
             return {"token": token, "refresh_token": refresh_token, "expire_at": payload.get("expire_at"), "success": True}
-        except:
+        except Exception as e:
+            breakpoint()
+            print(e)
             return {"token": "", "refresh_token": "", "expire_at": 1, "success": False}
 
     def decode_jwt(self, token, type="normal_token"):

@@ -28,7 +28,6 @@ class Users:
             "creator": creator
         }
         dicModel["password"] = self.users_management_obj.encrypt_password(self.users_management_obj,UserModel.password)
-        
         result = self.users_collection.insert_one(dicModel)
         return {
             "data" : {
